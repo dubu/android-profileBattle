@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -42,6 +43,27 @@ public class ListActivity extends android.app.ListActivity
 
         TextView empty = (TextView) findViewById(android.R.id.empty);
         empty.setVisibility(View.INVISIBLE);
+
+        // have photo?  처음이면
+        new AsyncTask<Object,Object,String>() {
+            @Override
+            protected String doInBackground(Object... params) {
+                try {
+                    ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("BattlePhoto");
+                    query.whereContains("installationId", ParseInstallation.getCurrentInstallation().getInstallationId());
+                    try {
+                        List<ParseObject> my  = query.find();
+                        if(my.size() == 0){
+                            openMy();
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                }
+                return null;
+            }
+        }.execute();
 
         new RemoteDataTask().execute();
         registerForContextMenu(getListView());
@@ -90,7 +112,8 @@ public class ListActivity extends android.app.ListActivity
         // Override this method to do custom remote calls
         protected Void doInBackground(Void... params) {
             // Gets the current list of todos in sorted order
-            ParseQuery query = new ParseQuery("BattlePhoto");
+
+            ParseQuery<ParseObject> query = new ParseQuery("BattlePhoto");
             //query.orderByDescending("point");
             query.orderByDescending("_updated_at");
 
