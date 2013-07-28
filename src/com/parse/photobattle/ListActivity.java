@@ -105,7 +105,7 @@ public class ListActivity extends android.app.ListActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        new RemoteDataTask().execute();
+       // new RemoteDataTask().execute();
     }
 
     private class RemoteDataTask extends AsyncTask<Void, Void, Void> {
