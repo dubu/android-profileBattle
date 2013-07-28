@@ -2,6 +2,7 @@ package com.parse.demo;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,6 +42,9 @@ public class BattleActivity extends Activity {
     private boolean mInProgress;
 
     private ImageButton button;
+
+
+    private ImageButton btn_home;
 
 
     // 카메라 미리보기 SurfaceView의 리스너
@@ -149,6 +153,7 @@ public class BattleActivity extends Activity {
                 options.inSampleSize = IN_SAMPLE_SIZE;
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
                 // 이미지 뷰 이미지 설정
+
                 mImage.setImageBitmap(bitmap);
                 // 정지된 프리뷰를 재개
                 camera.startPreview();
@@ -161,15 +166,9 @@ public class BattleActivity extends Activity {
 
     };
 
-
-    private  void savePhoto(final byte[] data){
-
-
-
+    private  void findPhoto(){
         new AsyncTask<Object,Object,String>() {
             List<ParseObject> photos;
-
-
             @Override
             protected String doInBackground(Object... params) {
 
@@ -177,10 +176,24 @@ public class BattleActivity extends Activity {
                 query.whereContains("installationId", ParseInstallation.getCurrentInstallation().getInstallationId());
                 try {
                     photos  = query.find();
-                    //ParseObject obj  = todos.get(0);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                return null;
 
-                    /*
-                    ParseFile applicantResume = (ParseFile)obj.get("profileFile");
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+
+                ParseObject parseObject;
+                if(photos.size() == 0 ){
+                    // insert
+
+                }else{
+                    // update
+                    parseObject  = photos.get(0);
+                    ParseFile applicantResume = (ParseFile)parseObject.get("profileFile");
                     applicantResume.getDataInBackground(new GetDataCallback() {
                         public void done(byte[] data, ParseException e) {
                             if (e == null) {
@@ -188,14 +201,28 @@ public class BattleActivity extends Activity {
                                 BitmapFactory.Options options = new BitmapFactory.Options();
                                 options.inSampleSize = IN_SAMPLE_SIZE;
                                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
-                                bitmap.getHeight();
+                                mImage.setImageBitmap(bitmap);
                             } else {
                                 // something went wrong
                             }
                         }
                     });
-                    */
 
+                }
+            }
+        }.execute();
+    }
+
+    private  void savePhoto(final byte[] data){
+        new AsyncTask<Object,Object,String>() {
+            List<ParseObject> photos;
+            @Override
+            protected String doInBackground(Object... params) {
+
+                ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("BattlePhoto");
+                query.whereContains("installationId", ParseInstallation.getCurrentInstallation().getInstallationId());
+                try {
+                    photos  = query.find();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -210,10 +237,12 @@ public class BattleActivity extends Activity {
                 if(photos.size() == 0 ){
                     // insert
                     parseObject = new ParseObject("BattlePhoto");
+                    parseObject.put("point", 0 );
                 }else{
                     // update
                     parseObject  = photos.get(0);
                 }
+
 
                 ParseFile file = new ParseFile("profileaa.png", data);
                 parseObject.put("installationId", ParseInstallation.getCurrentInstallation().getInstallationId());
@@ -221,8 +250,6 @@ public class BattleActivity extends Activity {
                 parseObject.saveInBackground();
             }
         }.execute();
-
-
     }
 
 
@@ -247,6 +274,21 @@ public class BattleActivity extends Activity {
         button = (ImageButton) findViewById(R.id.shutter);
         button.setOnClickListener(mButtonListener);
 
+        // go home 등록
+
+        btn_home = (ImageButton) findViewById(R.id.img_list);
+        btn_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                Intent intent = new Intent();
+                intent.putExtras(bundle);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
+
+
         // push notic regist
         ParseInstallation.getCurrentInstallation().saveInBackground();
         PushService.setDefaultPushCallback(this, BattleActivity.class);
@@ -264,5 +306,7 @@ public class BattleActivity extends Activity {
         jobApplication.saveInBackground();
         */
 
+        findPhoto();
     }
+
 }
