@@ -11,10 +11,11 @@
 
     <application
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" android:name="ToDoListApplication"  android:screenOrientation="portrait">
+        android:label="@string/app_name" android:name="ToDoListApplication"  >
         <activity
             android:name=".ToDoListActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
 <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,11 +26,13 @@
         <activity android:name=".CreateTodo" >
         </activity>
 
-        <activity android:name=".BattleActivity" >
+        <activity android:name=".BattleActivity"
+                  android:screenOrientation="portrait">
 
         </activity>
 
-        <activity android:name=".ListActivity" >
+        <activity android:name=".ListActivity"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
