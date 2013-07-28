@@ -1,6 +1,8 @@
 package com.parse.photobattle;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -137,7 +139,7 @@ public class BattleActivity extends Activity {
     // JPEG 이미지를 생성 후 호출
     private Camera.PictureCallback mPicutureListener = new Camera.PictureCallback()
     {
-        public void onPictureTaken(byte[] data, Camera camera)
+        public void onPictureTaken(final byte[] data, Camera camera)
         {
             Log.i(TAG, "Picture Taken");
             if (data != null)
@@ -156,7 +158,25 @@ public class BattleActivity extends Activity {
                 // 처리중 플래그를 떨어뜨림
                 mInProgress = false;
 
-                savePhoto(data);
+                // 배틀 등록 허가
+                AlertDialog.Builder alert_confirm = new AlertDialog.Builder(BattleActivity.this);
+                alert_confirm.setMessage("얼굴전쟁에 등록 하시겠습니까?").setCancelable(false).setPositiveButton("확인",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                savePhoto(data);
+                                // 'YES'
+                            }
+                        }).setNegativeButton("취소",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 'No'
+                                return;
+                            }
+                        });
+                AlertDialog alert = alert_confirm.create();
+                alert.show();
             }
         }
 
