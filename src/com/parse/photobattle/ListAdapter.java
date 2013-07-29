@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class ListAdapter extends BaseAdapter {
 
-    private static final int IN_SAMPLE_SIZE = 8;
+    private static final int IN_SAMPLE_SIZE = 1;
     private List<ParseObject> itemlist;
     private Activity activity;
 

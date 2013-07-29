@@ -30,7 +30,7 @@ public class BattleActivity extends Activity {
     // Log용 TAG
     private static final String TAG = "HelloCamera";
     // ImageView 설정 이미지 약하게 크기. 1 / 8의 크기로 처리
-    private static final int IN_SAMPLE_SIZE = 8;
+    private static final int IN_SAMPLE_SIZE = 16;
 
     // 카메라 제어
     private Camera mCamera;
